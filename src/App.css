@@ -1,0 +1,56 @@
+.app {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.timer {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 10px;
+  transition: background-color 0.3s;
+}
+
+.button.recording {
+  background-color: red;
+}
+
+.button.stop-button {
+  background-color: #dc3545;
+}
+
+.button.reset-button {
+  background-color: #6c757d;
+}
+
+.end-button {
+  background-color: #28a745;
+}
+
+.pdf-links {
+  margin-top: 20px;
+}
+
+.pdf-links a {
+  display: block;
+  margin-bottom: 10px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.pdf-links a:hover {
+  text-decoration: underline;
+}
+
+.pdf-embed-container {
+  margin: 40px;
+}
