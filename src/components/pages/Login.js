@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Login.css'; // Custom styles
-import images from '../../img/logo.png'; // Assuming 'images.jpg' is in the same directory
-
+import './Login.css';
+import images from '../../img/logo.png';
+import { setCookie } from '../../utils';
 
 const sha256 = require('js-sha256');
 
 const hashString = (str) => {
-  return sha256(str);
+    return sha256(str);
 };
 
 const Login = () => {
-    const [email, setEmail] = useState('');
+    const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -22,16 +22,19 @@ const Login = () => {
         try {
             setError('');
             const encrypted_pwd = hashString(password)
-            // const encryptedPassword = await encryptPassword(password); // Handle password encryption (see note below)
-            const response = await axios.post('/api/login', { email, encrypted_pwd });
-
-            if (response.data.success) {
-                // Handle successful login (e.g., redirect to home page)
-                console.log('Login successful!');
-
+            const response = await axios.post('http://localhost:5000/login', {
+                username: userName,
+                password: encrypted_pwd
+            });
+            if (response.status === 200) {
+                const data = response.data;
+                setCookie('doc_id', data.User_ID, 2)
+                setUserName('')
+                setPassword('')
             } else {
-                setError(response.data.message);
+                setError("Login Failed")
             }
+
         } catch (error) {
             console.error(error);
             setError('An error occurred. Please try again later.');
@@ -44,13 +47,13 @@ const Login = () => {
                 <Col xs={12} md={6} className="login-form-col">
                     <Form onSubmit={handleSubmit} className="login-form">
                         <h1 className="login-header">Login</h1>
-                        <Form.Group controlId="formBasicEmail">
-                            <Form.Label>Email address</Form.Label>
+                        <Form.Group controlId="formBasicUserName">
+                            <Form.Label>User Name</Form.Label>
                             <Form.Control
-                                type="email"
-                                placeholder="Enter email"
-                                value={email}
-                                onChange={(e) => {setError('');setEmail(e.target.value)}}
+                                type="text"
+                                placeholder="Enter user name"
+                                value={userName}
+                                onChange={(e) => { setError(''); setUserName(e.target.value) }}
                             />
                         </Form.Group>
                         <Form.Group controlId="formBasicPassword">
@@ -59,7 +62,7 @@ const Login = () => {
                                 type="password"
                                 placeholder="Password"
                                 value={password}
-                                onChange={(e) => {setError('');setPassword(e.target.value)}}
+                                onChange={(e) => { setError(''); setPassword(e.target.value) }}
                             />
                         </Form.Group>
                         <Button variant="primary" type="submit" className="login-btn">

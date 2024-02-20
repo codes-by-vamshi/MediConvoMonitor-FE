@@ -36,6 +36,7 @@
     max-width: 100%; /* Ensure the company logo fits within its container */
     height: auto; /* Maintain aspect ratio */
     margin-top: 10%;
+    margin-left: 20%;
     text-align: center; /* Justify text for a more formal look */
     animation: moveText 4s infinite alternate; /* Apply the moving animation */
 }
@@ -89,16 +90,16 @@
     }
 
     .login-form-col {
-        width: 50%; /* Make form column take up 50% width on larger screens */
+        width: 25%; /* Make form column take up 50% width on larger screens */
         order: 2; /* Move form column to the right */
     }
 
     .login-image-col {
-        width: 50%; /* Make image column take up 50% width on larger screens */
+        width: 75%; /* Make image column take up 50% width on larger screens */
         order: 1; /* Move image column to the left */
     }
 
     .login-form {
-        margin-top: 20%;
+        margin-top: 60%;
     }
 }
