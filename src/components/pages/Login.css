@@ -1,0 +1,104 @@
+/* Login.css */
+.login-row {
+    height: 100vh; /* Make the login form take up the full height of the viewport */
+    display: flex;
+    flex-direction: column; /* Stack columns vertically on small screens */
+}
+
+.login-form-col, .login-image-col {
+    width: 100%; /* Make columns take up full width on small screens */
+}
+
+.login-form-col {
+    background-color: #f8f9fa; /* Light gray background color for the login form */
+}
+
+.login-image-col {
+    background-color: #007bff; /* Blue background color for the image column */
+}
+
+.login-form {
+    padding: 20px;
+    border: 1px solid #ced4da; /* Add a border around the form */
+    border-radius: 5px;
+    margin-bottom: 20px; /* Add space between form and image column */
+}
+
+.login-header {
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    width: 70%; /* Make the login button full-width */
+}
+
+.login-image {
+    max-width: 100%; /* Ensure the company logo fits within its container */
+    height: auto; /* Maintain aspect ratio */
+    margin-top: 10%;
+    text-align: center; /* Justify text for a more formal look */
+    animation: moveText 4s infinite alternate; /* Apply the moving animation */
+}
+
+.login-message {
+    font-size: 1.3rem; /* Increase font size for better readability */
+    line-height: 1.6; /* Increase line height for better spacing */
+    margin-top: 10%; /* Add some space between the logo and the message */
+    color: whitesmoke; /* Set text color */
+    text-align: center; /* Justify text for a more formal look */
+    animation: moveText 4s infinite alternate; /* Apply the moving animation */
+}
+
+@keyframes moveText {
+    from {
+        transform: translateY(-5px); /* Move text up by 2 pixels */
+    }
+    to {
+        transform: translateY(5px); /* Move text down by 2 pixels */
+    }
+}
+
+/* Other styles remain the same */
+
+.login-btn {
+    width: 100%; /* Make the login button full-width */
+    margin-top: 20px;
+    transition: transform 0.3s ease; /* Add transition for smooth animation */
+}
+
+
+.login-form-col,
+.login-image-col {
+    opacity: 0; /* Initially hide the columns */
+    animation: fadeIn 1s ease forwards; /* Apply the fade-in animation */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0; /* Start with opacity 0 */
+    }
+    to {
+        opacity: 1; /* End with opacity 1 */
+    }
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+    .login-row {
+        flex-direction: row; /* Display columns side by side on larger screens */
+    }
+
+    .login-form-col {
+        width: 50%; /* Make form column take up 50% width on larger screens */
+        order: 2; /* Move form column to the right */
+    }
+
+    .login-image-col {
+        width: 50%; /* Make image column take up 50% width on larger screens */
+        order: 1; /* Move image column to the left */
+    }
+
+    .login-form {
+        margin-top: 20%;
+    }
+}
