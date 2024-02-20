@@ -37,6 +37,7 @@
 /* Patient Records styles */
 #patientRecordsTitle {
   margin-top: 20px;
+  color: #1E3B6F;
   text-align: center; /* Center align patient records title */
 }
 
@@ -83,4 +84,58 @@
 #recordTitle:hover {
   background-color: #009dff;
   animation: bounce 0.5s infinite;
+}
+
+.patient-record-container {
+  box-shadow: 0 0  10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-top: 10px;
+  width: 70%;
+  margin-left: 10%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: antiquewhite;
+  max-height: 100%;
+}
+
+.patient-record {
+  display: flex;
+  margin: 20px;
+  border: #1E3B6F 3px solid;
+  border-radius: 10px;
+}
+
+.patient-details-btn {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #009dff;
+  color: white;
+  cursor: pointer;
+}
+
+.patient-details-btn:hover {
+  background-color: #136391;
+}
+
+.logout-btn {
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  margin-left: 90%;
+  background-color: #009dff;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  font-size: large;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: #136391;
 }

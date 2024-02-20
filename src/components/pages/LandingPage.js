@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Navbar, Nav, Container, Row, Col, Form } from "react-bootstrap";
-import { BsFillMicFill } from "react-icons/bs"; // Import the microphone icon
+import { BsFillMicFill } from "react-icons/bs";
+import { getCookie, deleteCookie } from '../../utils';
 import "./LandingPage.css";
 
-const HomePage = () => {
+const PatientRecord = ({ record }) => {
+  return (<div className="patient-record">
+    <div style={{width: '80%', paddingLeft: '5px'}}>
+      <div style={{textAlign: "left"}}>Patient Id: {record.patient_id}</div>
+      <div style={{textAlign: "left"}}>Patient Name: {record.patient_name}</div>
+    </div>
+    <div className="patient-details-btn">View Details</div>
+  </div>)
+}
+
+const LandingPage = () => {
   const [userId, setUserId] = useState("");
   const [audioRecording, setAudioRecording] = useState(false);
   const [backendResponse, setBackendResponse] = useState("");
@@ -16,10 +27,10 @@ const HomePage = () => {
       // Display error message if user id is empty
       return;
     }
-  
+
     // Toggle audio recording state
     setAudioRecording(!audioRecording);
-  
+
     // Set backend response based on recording status
     if (!audioRecording) {
       setBackendResponse("Recording started");
@@ -30,11 +41,12 @@ const HomePage = () => {
       setBackendResponse("Recording ended");
     }
   };
-  
+
   const loadPatientRecords = async () => {
-    // Load patient records from backend API
-    // const response = await axios.get('http://localhost:5000/patient-records');
-    // setPatientRecords(response.data);
+    const response = await axios.post('http://localhost:5000/get_patient_details', {
+      doctor_id: getCookie('doc_id')
+    });
+    setPatientRecords(response.data);
   };
 
   useEffect(() => {
@@ -44,31 +56,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <Navbar bg="light" expand="lg">
-        <Navbar.Brand style={{ marginLeft: "100px" }}>
-          Swasthya Share
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <Nav.Link href="#home" style={{ marginLeft: "100px" }}>
-              Home
-            </Nav.Link>
-            <Nav.Link href="#link" style={{ marginLeft: "100px" }}>
-              About
-            </Nav.Link>
-            <Nav.Link href="#link" style={{ marginLeft: "100px" }}>
-              Contact
-            </Nav.Link>
-          </Nav>
-          <Nav>
-            <Nav.Link href="#logout" style={{ marginLeft: "450px" }}>
-              Log Out
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
-
+      <div className="logout-btn" onClick={()=>{deleteCookie('doc_id')}}>Log Out</div>
       <Container fluid>
         <Row>
           <Col md={6} className="form-col">
@@ -105,12 +93,14 @@ const HomePage = () => {
             {backendResponse && <p id="backendResponse">{backendResponse}</p>}
           </Col>
           <Col md={6}>
-            <h2 id="patientRecordsTitle">Patient Records</h2>
-            <ul id="patientRecordsList">
-              {patientRecords.map((record) => (
-                <li key={record.id}>{record.name}</li>
-              ))}
-            </ul>
+            <div className="patient-record-container">
+              <h2 id="patientRecordsTitle">Patient Records</h2>
+              <ul id="patientRecordsList">
+                {patientRecords.map((record) => (
+                  <PatientRecord record={record} />
+                ))}
+              </ul>
+            </div>
           </Col>
         </Row>
       </Container>
@@ -118,4 +108,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default LandingPage;
