@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Navbar, Nav, Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import { BsFillMicFill } from "react-icons/bs";
 import { getCookie, deleteCookie } from '../../utils';
 import "./LandingPage.css";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 
 const PatientRecord = ({ record }) => {
   return (<div className="patient-record">
@@ -20,6 +21,7 @@ const LandingPage = () => {
   const [audioRecording, setAudioRecording] = useState(false);
   const [backendResponse, setBackendResponse] = useState("");
   const [patientRecords, setPatientRecords] = useState([]);
+  const navigate = useNavigate();
 
   const handleUserSubmit = async (e) => {
     e.preventDefault();
