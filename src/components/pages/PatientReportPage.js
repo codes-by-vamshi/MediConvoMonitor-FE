@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf } from "@fortawesome/free-regular-svg-icons";
 import "./PatientReportPage.css";
@@ -22,13 +22,20 @@ const PatientReportPage = () => {
   };
 
   const handleDownloadPDF = async (name, fileType) => {
-    let response = await axios.post("http://16.171.138.18/download_pdfs", {
-      Folder_Name: name,
-    });
-    if (fileType === "admission_note") {
-      setPdfUrl(response.data.pdf_files[0]);
-    } else {
-      setPdfUrl(response.data.pdf_files[1]);
+    setLoading(true); // Set loading to true on button click
+    try {
+      let response = await axios.post("http://16.171.138.18/download_pdfs", {
+        Folder_Name: name,
+      });
+      if (fileType === "admission_note") {
+        setPdfUrl(response.data.pdf_files[0]);
+      } else {
+        setPdfUrl(response.data.pdf_files[1]);
+      }
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+    } finally {
+      setLoading(false); // Set loading to false after the response is received
     }
   };
 
@@ -44,7 +51,9 @@ const PatientReportPage = () => {
     <div>
       {loading && (
         <div className="loading-overlay">
-          <div className="loading-spinner"></div>
+          <Spinner animation="border" role="status">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
         </div>
       )}
       <h2 id="patient-records">Patient Records</h2>
