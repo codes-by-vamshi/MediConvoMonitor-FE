@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
@@ -16,28 +16,33 @@ const Login = () => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // State for loader
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true); // Show loader on button click
         try {
             setError('');
-            const encrypted_pwd = hashString(password)
+            const encrypted_pwd = hashString(password);
             const response = await axios.post('http://16.171.138.18/login', {
                 username: userName,
                 password: encrypted_pwd
             });
             if (response.status === 200) {
                 const data = response.data;
-                setCookie('doc_id', data.User_ID, 2)
-                setUserName('')
-                setPassword('')
+                setCookie('doc_id', data.User_ID, 2);
+                setUserName('');
+                setPassword('');
+                // Redirect to next page
+                // You can use React Router for navigation
             } else {
-                setError("Login Failed")
+                setError('Login Failed');
             }
-
         } catch (error) {
             console.error(error);
             setError('An error occurred. Please try again later.');
+        } finally {
+            setIsLoading(false); // Hide loader after form submission
         }
     };
 
@@ -65,16 +70,15 @@ const Login = () => {
                                 onChange={(e) => { setError(''); setPassword(e.target.value) }}
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit" className="login-btn">
-                            Login
+                        {/* Conditionally render spinner/loader */}
+                        <Button variant="primary" type="submit" className="login-btn" disabled={isLoading}>
+                            {isLoading ? <Spinner animation="border" size="sm" /> : 'Login'}
                         </Button>
                         {error && <p className="text-danger">{error}</p>}
                     </Form>
                 </Col>
                 <Col xs={12} md={6} className="login-image-col">
-                    {/* Add your company logo here */}
                     <img src={images} alt="Company logo" className="login-image" />
-
                     <p className="login-message">
                         <i>"Imagine a world where administrative tasks are a breeze, where medical records are just a click away, and accountability is never in question. With our streamlined approach, we're transforming the way healthcare operates, making every process smoother, every record more accessible, and every decision more informed. Welcome to a new era of efficiency and excellence in healthcare administration."</i>
                     </p>

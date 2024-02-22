@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col, Form, Spinner } from "react-bootstrap";
 import { BsFillMicFill } from "react-icons/bs";
 import { getCookie, deleteCookie, setCookie } from '../../utils';
 import "./LandingPage.css";
@@ -8,7 +8,10 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 
 const PatientRecord = ({ record }) => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
+
   const viewDetailsClicked = async (patientId) => {
+    setIsLoading(true); // Set loading to true when starting to load details
     try {
       let response = await axios.post('http://16.171.138.18/get_patient_info', {
         patient_id: patientId
@@ -18,16 +21,22 @@ const PatientRecord = ({ record }) => {
       navigate('/patientreport')
     } catch (error) {
       return
+    } finally {
+      setIsLoading(false); // Set loading to false when navigation is complete or an error occurs
     }
   }
 
-  return (<div className="patient-record">
-    <div style={{ width: '80%', paddingLeft: '5px' }}>
-      <div style={{ textAlign: "left" }}>Patient Id: {record.patient_id}</div>
-      <div style={{ textAlign: "left" }}>Patient Name: {record.patient_name}</div>
+  return (
+    <div className="patient-record">
+      <div style={{ width: '80%', paddingLeft: '5px' }}>
+        <div style={{ textAlign: "left" }}>Patient Id: {record.patient_id}</div>
+        <div style={{ textAlign: "left" }}>Patient Name: {record.patient_name}</div>
+      </div>
+      <div className="patient-details-btn" onClick={() => { viewDetailsClicked(record.patient_id) }}>
+        {isLoading ? "View details loading..." : "View Details"}
+      </div>
     </div>
-    <div className="patient-details-btn" onClick={() => { viewDetailsClicked(record.patient_id) }}>View Details</div>
-  </div>)
+  )
 }
 
 const Timer = ({ time }) => {
@@ -52,19 +61,26 @@ const LandingPage = () => {
   const [audioChunks, setAudioChunks] = useState([]);
   const [backendResponse, setBackendResponse] = useState("");
   const [patientRecords, setPatientRecords] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Initialize loading as true
 
   useEffect(() => {
-    let interval;
-    if (audioRecording) {
-      interval = setInterval(() => {
-        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
+    const loadPatientRecords = async () => {
+      setIsLoading(true); // Set loading to true when starting to load records
+      try {
+        const response = await axios.post('http://16.171.138.18/get_patients', {
+          doctor_id: getCookie('doc_id')
+        });
+        setPatientRecords(response.data);
+      } catch (error) {
+        console.error('Error loading patient records:', error);
+        setPatientRecords([]); // Set empty records in case of error
+      } finally {
+        setIsLoading(false); // Set loading to false when records are loaded or error occurs
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [audioRecording]);
+    loadPatientRecords();
+  }, []);
 
   const startRecording = async () => {
     if (patientId === "") {
@@ -132,21 +148,20 @@ const LandingPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioChunks])
 
-  const loadPatientRecords = async () => {
-    const response = await axios.post('http://16.171.138.18/get_patients', {
-      doctor_id: getCookie('doc_id')
-    });
-    setPatientRecords(response.data);
+  const handleLogout = () => {
+    setIsLoading(true); // Show loader
+    deleteCookie('doc_id'); // Perform logout action
   };
-
-  useEffect(() => {
-    // Load patient records on page load
-    loadPatientRecords();
-  }, []);
 
   return (
     <div>
-      <div className="logout-btn" onClick={() => { deleteCookie('doc_id') }}>Log Out</div>
+      {(!isLoading && patientRecords.length === 0) && <p>No patient recordings available</p>} {/* Show message if no records */}
+      <div className="logout-btn" onClick={handleLogout}>Log Out</div>
+      {isLoading && (
+        <div className="loader-overlay">
+          <Spinner animation="border" variant="primary" />
+        </div>
+      )}
       <Container fluid>
         <Row>
           <Col md={6} className="form-col">
@@ -180,7 +195,7 @@ const LandingPage = () => {
               />
             </Form>
             <Timer time={elapsedTime} />
-            {audioRecording && <p id="recordingMessage">Recording audio...</p>}
+            {audioRecording && <p id="recordingMessage">RECORDING AUDIO...</p>}
             {backendResponse && <p id="backendResponse">{backendResponse}</p>}
           </Col>
           <Col md={6}>
