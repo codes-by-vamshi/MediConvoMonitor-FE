@@ -10,7 +10,7 @@ const PatientRecord = ({ record }) => {
   const navigate = useNavigate();
   const viewDetailsClicked = async (patientId) => {
     try {
-      let response = await axios.post('https://dskvamshi1998.pythonanywhere.com/get_patient_info', {
+      let response = await axios.post('http://16.171.138.18/get_patient_info', {
         patient_id: patientId
       });
       localStorage.setItem("patient_data", JSON.stringify(response.data));
@@ -72,7 +72,7 @@ const LandingPage = () => {
       return;
     }
     try {
-      const response = await axios.post('https://dskvamshi1998.pythonanywhere.com/get_patient_info', {
+      const response = await axios.post('http://16.171.138.18/get_patient_info', {
         patient_id: patientId
       });
     } catch (error) {
@@ -109,7 +109,7 @@ const LandingPage = () => {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recording.wav');
 
-        fetch('https://dskvamshi1998.pythonanywhere.com/transcribe-audio', {
+        fetch('http://16.171.138.18/transcribe-audio', {
           method: 'POST',
           body: formData,
         })
@@ -133,7 +133,7 @@ const LandingPage = () => {
   }, [audioChunks])
 
   const loadPatientRecords = async () => {
-    const response = await axios.post('https://dskvamshi1998.pythonanywhere.com/get_patients', {
+    const response = await axios.post('http://16.171.138.18/get_patients', {
       doctor_id: getCookie('doc_id')
     });
     setPatientRecords(response.data);

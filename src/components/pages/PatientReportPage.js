@@ -23,7 +23,7 @@ const PatientReportPage = () => {
   }
 
   const handleDownloadPDF = async (name, fileType) => {
-    let response = await axios.post('https://dskvamshi1998.pythonanywhere.com/download_pdfs', {
+    let response = await axios.post('http://16.171.138.18/download_pdfs', {
       Folder_Name: name
     });
     if (fileType === 'admission_note') {
