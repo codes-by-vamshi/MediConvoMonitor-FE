@@ -125,7 +125,7 @@ const LandingPage = () => {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recording.wav');
 
-        fetch('http://16.171.138.18/transcribe-audio', {
+        fetch('https://dskvamshi1998.pythonanywhere.com/transcribe-audio', {
           method: 'POST',
           body: formData,
         })
