@@ -2,50 +2,138 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { BsFillMicFill } from "react-icons/bs";
-import { getCookie, deleteCookie } from '../../utils';
+import { getCookie, deleteCookie, setCookie } from '../../utils';
 import "./LandingPage.css";
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 
 const PatientRecord = ({ record }) => {
+  const navigate = useNavigate();
+  const viewDetailsClicked = async (patientId) => {
+    try {
+      let response = await axios.post('https://dskvamshi1998.pythonanywhere.com/get_patient_info', {
+        patient_id: patientId
+      });
+      localStorage.setItem("patient_data", JSON.stringify(response.data));
+      setCookie('patient_id', patientId, 7)
+      navigate('/patientreport')
+    } catch (error) {
+      return
+    }
+  }
+
   return (<div className="patient-record">
-    <div style={{width: '80%', paddingLeft: '5px'}}>
-      <div style={{textAlign: "left"}}>Patient Id: {record.patient_id}</div>
-      <div style={{textAlign: "left"}}>Patient Name: {record.patient_name}</div>
+    <div style={{ width: '80%', paddingLeft: '5px' }}>
+      <div style={{ textAlign: "left" }}>Patient Id: {record.patient_id}</div>
+      <div style={{ textAlign: "left" }}>Patient Name: {record.patient_name}</div>
     </div>
-    <div className="patient-details-btn">View Details</div>
+    <div className="patient-details-btn" onClick={() => { viewDetailsClicked(record.patient_id) }}>View Details</div>
   </div>)
 }
 
+const Timer = ({ time }) => {
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="timer">
+      Timer: {formatTime(time)}
+    </div>
+  );
+};
+
 const LandingPage = () => {
-  const [userId, setUserId] = useState("");
+  const [patientId, setPatientId] = useState("");
   const [audioRecording, setAudioRecording] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [audioChunks, setAudioChunks] = useState([]);
   const [backendResponse, setBackendResponse] = useState("");
   const [patientRecords, setPatientRecords] = useState([]);
-  const navigate = useNavigate();
 
-  const handleUserSubmit = async (e) => {
-    e.preventDefault();
-    if (userId === "") {
-      // Display error message if user id is empty
-      return;
+  useEffect(() => {
+    let interval;
+    if (audioRecording) {
+      interval = setInterval(() => {
+        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
     }
 
-    // Toggle audio recording state
-    setAudioRecording(!audioRecording);
+    return () => clearInterval(interval);
+  }, [audioRecording]);
 
-    // Set backend response based on recording status
-    if (!audioRecording) {
-      setBackendResponse("Recording started");
-      setTimeout(() => {
-        setBackendResponse("");
-      }, 5000);
-    } else {
-      setBackendResponse("Recording ended");
+  const startRecording = async () => {
+    if (patientId === "") {
+      setBackendResponse("Add Patient Id");
+      return;
+    }
+    try {
+      const response = await axios.post('https://dskvamshi1998.pythonanywhere.com/get_patient_info', {
+        patient_id: patientId
+      });
+    } catch (error) {
+      setBackendResponse("Invalid Patient Id")
+      return
+    }
+    setBackendResponse("")
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = (e) => {
+        setAudioChunks([e.data]);
+      };
+      recorder.start();
+      setMediaRecorder(recorder);
+      setAudioRecording(true);
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
     }
   };
 
+  const stopRecording = () => {
+    if (mediaRecorder && audioRecording) {
+      setAudioRecording(false);
+      mediaRecorder.stop();
+      setElapsedTime(0)
+    }
+  };
+
+  useEffect(() => {
+    const sendRecording = () => {
+      if ((audioChunks.length > 0) && (audioRecording === false)) {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'recording.wav');
+
+        fetch('https://dskvamshi1998.pythonanywhere.com/transcribe-audio', {
+          method: 'POST',
+          body: formData,
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.blob();
+          })
+          .then(blob => {
+            // Convert the PDF blob to a data URL
+            const pdfUrl = URL.createObjectURL(blob);
+          })
+          .catch(error => {
+            console.error('Error processing PDF file:', error);
+          });
+      }
+    };
+    sendRecording();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioChunks])
+
   const loadPatientRecords = async () => {
-    const response = await axios.post('http://localhost:5000/get_patient_details', {
+    const response = await axios.post('https://dskvamshi1998.pythonanywhere.com/get_patients', {
       doctor_id: getCookie('doc_id')
     });
     setPatientRecords(response.data);
@@ -58,7 +146,7 @@ const LandingPage = () => {
 
   return (
     <div>
-      <div className="logout-btn" onClick={()=>{deleteCookie('doc_id')}}>Log Out</div>
+      <div className="logout-btn" onClick={() => { deleteCookie('doc_id') }}>Log Out</div>
       <Container fluid>
         <Row>
           <Col md={6} className="form-col">
@@ -68,21 +156,21 @@ const LandingPage = () => {
                 Record Patient and Doctor Conversation
               </h3>
             </div>
-            <Form onSubmit={handleUserSubmit} id="form">
+            <Form onSubmit={() => { audioRecording ? stopRecording() : startRecording() }} id="form">
               <Form.Group controlId="formBasicUserId">
-                <Form.Label id="label">User ID</Form.Label>
+                <Form.Label id="label">Patient ID</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter user ID"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
+                  value={patientId}
+                  onChange={(e) => setPatientId(e.target.value)}
                 />
               </Form.Group>
 
               {/* Use microphone icon instead of button */}
               <BsFillMicFill
                 id="micIcon"
-                onClick={handleUserSubmit}
+                onClick={() => { audioRecording ? stopRecording() : startRecording() }}
                 style={{
                   marginTop: "40px",
                   cursor: "pointer",
@@ -91,15 +179,16 @@ const LandingPage = () => {
                 }}
               />
             </Form>
+            <Timer time={elapsedTime} />
             {audioRecording && <p id="recordingMessage">Recording audio...</p>}
             {backendResponse && <p id="backendResponse">{backendResponse}</p>}
           </Col>
           <Col md={6}>
+            <h2 id="patientRecordsTitle">Patient Records</h2>
             <div className="patient-record-container">
-              <h2 id="patientRecordsTitle">Patient Records</h2>
               <ul id="patientRecordsList">
                 {patientRecords.map((record) => (
-                  <PatientRecord record={record} />
+                  <PatientRecord key={record.patient_id} record={record} />
                 ))}
               </ul>
             </div>

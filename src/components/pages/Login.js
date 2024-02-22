@@ -22,7 +22,7 @@ const Login = () => {
         try {
             setError('');
             const encrypted_pwd = hashString(password)
-            const response = await axios.post('http://localhost:5000/login', {
+            const response = await axios.post('https://dskvamshi1998.pythonanywhere.com/login', {
                 username: userName,
                 password: encrypted_pwd
             });

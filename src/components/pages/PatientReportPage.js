@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from "axios";
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from '@fortawesome/free-regular-svg-icons';
@@ -8,21 +9,35 @@ const PatientReportPage = () => {
   // Sample patient records data
   const [loading, setLoading] = useState(true);
   const [patientRecords, setPatientRecords] = useState([]);
+  const [pdfs, setPdfs] = useState('')
 
-  const handleDownloadPDF = (pdfName) => {
-    // Logic to download PDF
-    console.log('Downloading PDF:', pdfName);
+  const setPdfUrl = (base64String) => {
+    const decodedData = atob(base64String);
+    const binaryData = new Uint8Array(decodedData.length);
+    for (let i = 0; i < decodedData.length; i++) {
+      binaryData[i] = decodedData.charCodeAt(i);
+    }
+    const blob = new Blob([binaryData], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    setPdfs(url)
+  }
+
+  const handleDownloadPDF = async (name, fileType) => {
+    let response = await axios.post('https://dskvamshi1998.pythonanywhere.com/download_pdfs', {
+      Folder_Name: name
+    });
+    if (fileType === 'admission_note') {
+      setPdfUrl(response.data.pdf_files[0])
+    } else {
+      setPdfUrl(response.data.pdf_files[1])
+    }
   };
 
-  // Simulate loading delay
-  setTimeout(() => {
-    setPatientRecords([
-      { date: '2024-02-21', pdf1: 'pdf1.pdf', pdf2: 'pdf2.pdf' },
-      // Add more patient records as needed
-    ]);
-    setLoading(false);
-  }, 2000);
-
+  useEffect(() => {
+    const patientData = JSON.parse(localStorage.getItem("patient_data"))['Folder_Names'];
+    setPatientRecords(patientData)
+    setLoading(false)
+  }, [])
   return (
     <div>
       {loading && (
@@ -35,8 +50,8 @@ const PatientReportPage = () => {
         <thead>
           <tr>
             <th>Date</th>
-            <th>Transciption Report</th>
-            <th>Progress Report</th>
+            <th>Admission Note</th>
+            <th>Treatment Plan</th>
           </tr>
         </thead>
         <tbody>
@@ -44,12 +59,12 @@ const PatientReportPage = () => {
             <tr key={index}>
               <td>{record.date}</td>
               <td>
-                <Button variant="primary" onClick={() => handleDownloadPDF(record.pdf1)}>
+                <Button variant="primary" onClick={() => handleDownloadPDF(record.name, 'admission_note')}>
                   <FontAwesomeIcon icon={faFilePdf} className="pdf-icon" /> PDF 1
                 </Button>
               </td>
               <td>
-                <Button variant="primary" onClick={() => handleDownloadPDF(record.pdf2)}>
+                <Button variant="primary" onClick={() => handleDownloadPDF(record.name, 'treatment_plan')}>
                   <FontAwesomeIcon icon={faFilePdf} className="pdf-icon" /> PDF 2
                 </Button>
               </td>
@@ -57,6 +72,15 @@ const PatientReportPage = () => {
           ))}
         </tbody>
       </table>
+      <div>
+        {pdfs && <iframe
+          title="PDF Viewer"
+          src={pdfs}
+          width="100%"
+          height="500px"
+          frameBorder="0"
+        ></iframe>}
+      </div>
     </div>
   );
 };

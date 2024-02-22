@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import { getCookie } from './utils';
@@ -7,7 +7,17 @@ import LandingPage from './components/pages/LandingPage';
 import PatientReportPage from './components/pages/PatientReportPage';
 
 const App = () => {
-  const docId = getCookie('doc_id');
+  const [docId, setDocId] = useState(getCookie('doc_id'));
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const currentDocId = getCookie('doc_id');
+      if (currentDocId !== docId) {
+        setDocId(currentDocId);
+      }
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [docId]); 
 
   return (
     <Router>
