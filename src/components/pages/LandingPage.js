@@ -4,14 +4,14 @@ import { Container, Row, Col, Form, Spinner } from "react-bootstrap";
 import { BsFillMicFill } from "react-icons/bs";
 import { getCookie, deleteCookie, setCookie } from '../../utils';
 import "./LandingPage.css";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+import { useNavigate } from 'react-router-dom';
 
 const PatientRecord = ({ record }) => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   const viewDetailsClicked = async (patientId) => {
-    setIsLoading(true); // Set loading to true when starting to load details
+    setIsLoading(true);
     try {
       let response = await axios.post('http://16.171.138.18/get_patient_info', {
         patient_id: patientId
@@ -20,9 +20,9 @@ const PatientRecord = ({ record }) => {
       setCookie('patient_id', patientId, 7)
       navigate('/patientreport')
     } catch (error) {
-      return
+      console.error('Error fetching patient info:', error);
     } finally {
-      setIsLoading(false); // Set loading to false when navigation is complete or an error occurs
+      setIsLoading(false);
     }
   }
 
@@ -36,7 +36,7 @@ const PatientRecord = ({ record }) => {
         {isLoading ? "View details loading..." : "View Details"}
       </div>
     </div>
-  )
+  );
 }
 
 const Timer = ({ time }) => {
@@ -57,15 +57,16 @@ const LandingPage = () => {
   const [patientId, setPatientId] = useState("");
   const [audioRecording, setAudioRecording] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null); // Store interval ID
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [audioChunks, setAudioChunks] = useState([]);
   const [backendResponse, setBackendResponse] = useState("");
   const [patientRecords, setPatientRecords] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Initialize loading as true
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadPatientRecords = async () => {
-      setIsLoading(true); // Set loading to true when starting to load records
+      setIsLoading(true);
       try {
         const response = await axios.post('http://16.171.138.18/get_patients', {
           doctor_id: getCookie('doc_id')
@@ -73,15 +74,16 @@ const LandingPage = () => {
         setPatientRecords(response.data);
       } catch (error) {
         console.error('Error loading patient records:', error);
-        setPatientRecords([]); // Set empty records in case of error
+        setPatientRecords([]);
       } finally {
-        setIsLoading(false); // Set loading to false when records are loaded or error occurs
+        setIsLoading(false);
       }
     };
 
     loadPatientRecords();
   }, []);
 
+  // Start recording function
   const startRecording = async () => {
     if (patientId === "") {
       setBackendResponse("Add Patient Id");
@@ -105,19 +107,28 @@ const LandingPage = () => {
       recorder.start();
       setMediaRecorder(recorder);
       setAudioRecording(true);
+      
+      // Start timer
+      const intervalId = setInterval(() => {
+        setElapsedTime(prevTime => prevTime + 1);
+      }, 1000);
+      setTimerInterval(intervalId);
     } catch (error) {
       console.error('Error accessing microphone:', error);
     }
   };
 
+  // Stop recording function
   const stopRecording = () => {
     if (mediaRecorder && audioRecording) {
       setAudioRecording(false);
       mediaRecorder.stop();
-      setElapsedTime(0)
+      clearInterval(timerInterval); // Stop timer interval
+      setElapsedTime(0); // Reset elapsed time
     }
   };
 
+  // Send recording function
   useEffect(() => {
     const sendRecording = () => {
       if ((audioChunks.length > 0) && (audioRecording === false)) {
@@ -136,7 +147,6 @@ const LandingPage = () => {
             return response.blob();
           })
           .then(blob => {
-            // Convert the PDF blob to a data URL
             const pdfUrl = URL.createObjectURL(blob);
           })
           .catch(error => {
@@ -148,14 +158,15 @@ const LandingPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioChunks])
 
+  // Logout function
   const handleLogout = () => {
-    setIsLoading(true); // Show loader
-    deleteCookie('doc_id'); // Perform logout action
+    setIsLoading(true);
+    deleteCookie('doc_id');
   };
 
   return (
     <div>
-      {(!isLoading && patientRecords.length === 0) && <p>No patient recordings available</p>} {/* Show message if no records */}
+      {(!isLoading && patientRecords.length === 0) && <p>No patient recordings available</p>}
       <div className="logout-btn" onClick={handleLogout}>Log Out</div>
       {isLoading && (
         <div className="loader-overlay">
@@ -166,7 +177,6 @@ const LandingPage = () => {
         <Row>
           <Col md={6} className="form-col">
             <div className="leftHalf">
-              {/* Animate on hover */}
               <h3 className="recordConversation" id="recordTitle">
                 Record Patient and Doctor Conversation
               </h3>
@@ -182,7 +192,6 @@ const LandingPage = () => {
                 />
               </Form.Group>
 
-              {/* Use microphone icon instead of button */}
               <BsFillMicFill
                 id="micIcon"
                 onClick={() => { audioRecording ? stopRecording() : startRecording() }}
