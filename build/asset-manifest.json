@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/MediConvoMonitor-FE/static/css/main.0432603c.css",
+    "main.js": "/MediConvoMonitor-FE/static/js/main.583a929f.js",
+    "static/js/453.69efd2cd.chunk.js": "/MediConvoMonitor-FE/static/js/453.69efd2cd.chunk.js",
+    "static/media/logo.png": "/MediConvoMonitor-FE/static/media/logo.6a1da163305f112553ec.png",
+    "index.html": "/MediConvoMonitor-FE/index.html",
+    "main.0432603c.css.map": "/MediConvoMonitor-FE/static/css/main.0432603c.css.map",
+    "main.583a929f.js.map": "/MediConvoMonitor-FE/static/js/main.583a929f.js.map",
+    "453.69efd2cd.chunk.js.map": "/MediConvoMonitor-FE/static/js/453.69efd2cd.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0432603c.css",
+    "static/js/main.583a929f.js"
+  ]
+}
