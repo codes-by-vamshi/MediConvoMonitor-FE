@@ -62,11 +62,11 @@ The Patient Report Page offers a detailed view of patient records, including adm
 2. Install dependencies:
 
    ```bash
-        cd login-page-MediConvoMonitor
-        npm install
+      cd login-page-MediConvoMonitor
+      npm install
 3. Run the application:
     ```bash
-            npm start
+      npm start
 ## Usage:
 
 1. Log in to the Swasthya Share system using your credentials.
