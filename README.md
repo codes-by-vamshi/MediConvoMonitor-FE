@@ -1,70 +1,88 @@
-# Getting Started with Create React App
+# Swasthya Share
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Swasthya Share revolutionizes hospital operations by leveraging patient-doctor interaction audio inputs to generate comprehensive admission notes and treatment plans. This innovative approach enhances efficiency and fosters seamless communication among healthcare professionals, ultimately optimizing patient care.
 
-## Available Scripts
+# Problems Breakdown
 
-In the project directory, you can run:
+Swasthya Share addresses several key challenges in the healthcare industry:
 
-### `npm start`
+1. **Broken/Delayed Communication**: Traditional communication methods can lead to delays or breakdowns in conveying critical information among healthcare professionals, impacting patient care.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+2. **Lots of Administrative Tasks for Doctors**: Doctors often spend significant time on administrative tasks such as documentation, which detracts from time spent on patient care.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. **Lack of Accountability**: Without proper documentation and tracking systems, accountability in healthcare practices can be compromised, leading to errors or oversights.
 
-### `npm test`
+4. **Undocumented**: Inadequate documentation of patient interactions, treatments, and progress can hinder continuity of care and decision-making processes.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+5. **Hospital Data not Organized**: Disorganized hospital data management systems can result in inefficiencies, difficulty in accessing patient information, and increased risk of errors.
 
-### `npm run build`
+Swasthya Share aims to mitigate these challenges by streamlining processes, improving communication, and enhancing accountability through its innovative platform.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Features:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Streamlined Hospital Operations**: Automate the generation of detailed admission notes and treatment plans.
+- **Audio Input Integration**: Utilize patient-doctor interaction audio inputs to gather necessary information.
+- **Efficiency Improvement**: Enhance efficiency by automating documentation processes.
+- **Communication Enhancement**: Facilitate seamless communication among healthcare professionals.
+- **Patient-Centric Approach**: Prioritize patient care by streamlining administrative tasks.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Architecture Overview
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+[![current-architecture.png](https://i.postimg.cc/qvyWg08N/current-architecture.png)](https://postimg.cc/zyDxPs2N)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Login Page:
+The Login Page allows healthcare professionals to securely access the Swasthya Share system. Users are required to input their credentials to log in, ensuring confidentiality and security.
 
-## Learn More
+## Landing Page:
+The Landing Page serves as the main interface for users after logging in. It provides essential functionalities such as recording patient-doctor conversations and accessing patient records. Healthcare professionals can seamlessly navigate through different sections of the platform from the Landing Page.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Patient Report Page:
+The Patient Report Page offers a detailed view of patient records, including admission notes and treatment plans. Healthcare professionals can review and manage patient data efficiently, enabling informed decision-making and personalized patient care.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+## Technologies Used:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **Frontend**: React.js
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
+- **Audio Processing**: MediaRecorder API
+- **File Handling**: Blob and File APIs
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
+## Installation:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. Clone the repository:
 
-### Advanced Configuration
+git clone ttps://github.com/codes-by-vamshi/MediConvoMonitor-FE.git
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+2. Install dependencies:
 
-### Deployment
+cd login-page-MediConvoMonitor
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+3. Run the application:
 
-### `npm run build` fails to minify
+npm start
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Usage:
+
+1. Log in to the Swasthya Share system using your credentials.
+2. Record patient-doctor conversations using the provided functionality.
+3. Access patient records to view detailed admission notes and treatment plans.
+4. Download and view generated PDFs for further reference.
+
+## Contributors:
+
+- Sai Krishna Vamshi Devarasetty
+- Davang Sikand
+- Nidugondi L N Sai Pranav
+- Chirag Chaudhary
+
+## License:
+
+This project is licensed under the [License Name] License - see the [LICENSE.md](LICENSE.md) file for details.
