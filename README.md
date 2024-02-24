@@ -59,17 +59,18 @@ The Patient Report Page offers a detailed view of patient records, including adm
 
    ```bash
 git clone ttps://github.com/codes-by-vamshi/MediConvoMonitor-FE.git
-
+```
 2. Install dependencies:
 
    ```bash
 cd login-page-MediConvoMonitor
 npm install
+```
 
 3. Run the application:
-
+```bash
 npm start
-
+```
 
 ## Usage:
 
