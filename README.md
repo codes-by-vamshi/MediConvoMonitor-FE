@@ -46,7 +46,7 @@ The Patient Report Page offers a detailed view of patient records, including adm
 ## Technologies Used:
 
 - **Frontend**: React.js
-- **Backend**: Node.js, Express.js
+- **Backend**: Flask
 - **Database**: MongoDB
 - **Audio Processing**: MediaRecorder API
 - **File Handling**: Blob and File APIs
@@ -57,10 +57,12 @@ The Patient Report Page offers a detailed view of patient records, including adm
 
 1. Clone the repository:
 
+   ```bash
 git clone ttps://github.com/codes-by-vamshi/MediConvoMonitor-FE.git
 
 2. Install dependencies:
 
+   ```bash
 cd login-page-MediConvoMonitor
 npm install
 
